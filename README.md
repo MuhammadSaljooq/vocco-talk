@@ -115,3 +115,4 @@ The original HTML files (index.html, product.html, blog.html, contact.html) have
 
 The voice agent demos are located in `src/demos/` and use the `@google/genai` package for real-time voice interactions.
 
+# Test deployment - Wed Jan  7 23:54:15 PKT 2026

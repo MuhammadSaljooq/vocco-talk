@@ -6,6 +6,60 @@
   body {
     @apply font-display bg-background-dark text-white overflow-x-hidden antialiased selection:bg-primary/30 selection:text-white;
   }
+  
+  /* Prevent layout shift */
+  html {
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+  
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Better touch targets on mobile */
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Performance optimizations */
+  img, video {
+    content-visibility: auto;
+  }
+  
+  /* Prevent blank screen during load */
+  #root {
+    min-height: 100vh;
+    min-height: -webkit-fill-available; /* iOS Safari */
+    background-color: #020304;
+    width: 100%;
+  }
+  
+  /* Ensure body is visible on mobile */
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+  }
+  
+  @media (max-width: 640px) {
+    body {
+      font-size: 16px;
+    }
+  }
+  
+  /* Loading state styles */
+  .loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: #020304;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
 }
 
 @layer utilities {

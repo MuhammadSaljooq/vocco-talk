@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { GoogleGenAI, Modality } from '@google/genai';
+import { GoogleGenAI, Modality, Type } from '@google/genai';
 import { createPCMBlob, decode, decodeAudioData } from '../utils/audioUtils';
+import TaskExecutionIndicator from '../components/TaskExecutionIndicator';
 
 const CallStatus = {
   IDLE: 'IDLE',
@@ -41,36 +42,118 @@ export default function PakBankDemo() {
   const [callStatus, setCallStatus] = useState(CallStatus.IDLE);
   const [transcriptions, setTranscriptions] = useState([]);
   const [isMuted, setIsMuted] = useState(false);
+  const [executingTask, setExecutingTask] = useState(null);
+  const [accountBalance, setAccountBalance] = useState(125000); // Simulated balance
+  const [cardStatus, setCardStatus] = useState('active');
+  const [recentTasks, setRecentTasks] = useState([]);
   
   const inputAudioContextRef = useRef(null);
   const outputAudioContextRef = useRef(null);
   const nextStartTimeRef = useRef(0);
   const activeSourcesRef = useRef(new Set());
   const sessionPromiseRef = useRef(null);
+  const sessionRef = useRef(null);
   const scriptProcessorRef = useRef(null);
   const micStreamRef = useRef(null);
+  const isMutedRef = useRef(false);
 
-  const stopCall = useCallback(() => {
+  // Function declarations for automated tasks
+  const checkBalanceFn = {
+    name: 'check_balance',
+    parameters: {
+      type: Type.OBJECT,
+      description: 'Check the customer\'s account balance',
+      properties: {
+        account_type: { type: Type.STRING, description: 'Type of account (savings, current, etc.)' }
+      }
+    }
+  };
+
+  const blockCardFn = {
+    name: 'block_card',
+    parameters: {
+      type: Type.OBJECT,
+      description: 'Block a lost or stolen card immediately',
+      properties: {
+        card_number: { type: Type.STRING, description: 'Last 4 digits of the card' },
+        reason: { type: Type.STRING, description: 'Reason for blocking (lost, stolen, etc.)' }
+      },
+      required: ['reason']
+    }
+  };
+
+  const getLoanInfoFn = {
+    name: 'get_loan_information',
+    parameters: {
+      type: Type.OBJECT,
+      description: 'Get information about loan products',
+      properties: {
+        loan_type: { type: Type.STRING, description: 'Type of loan (personal, home, car, etc.)' }
+      }
+    }
+  };
+
+  const scheduleAppointmentFn = {
+    name: 'schedule_appointment',
+    parameters: {
+      type: Type.OBJECT,
+      description: 'Schedule an appointment with a bank representative',
+      properties: {
+        purpose: { type: Type.STRING, description: 'Purpose of the appointment' },
+        preferred_date: { type: Type.STRING, description: 'Preferred date for appointment' }
+      },
+      required: ['purpose']
+    }
+  };
+
+  const stopCall = useCallback(async () => {
+    // Close session properly
+    if (sessionRef.current) {
+      try {
+        await sessionRef.current.close();
+      } catch (err) {
+        console.warn('Error closing session:', err);
+      }
+      sessionRef.current = null;
+    }
+
     if (micStreamRef.current) {
       micStreamRef.current.getTracks().forEach(track => track.stop());
+      micStreamRef.current = null;
     }
     if (scriptProcessorRef.current) {
       scriptProcessorRef.current.disconnect();
+      scriptProcessorRef.current = null;
     }
-    if (inputAudioContextRef.current) {
-      inputAudioContextRef.current.close();
+    if (inputAudioContextRef.current && inputAudioContextRef.current.state !== 'closed') {
+      try {
+        await inputAudioContextRef.current.close().catch(console.warn);
+      } catch (err) {
+        console.warn('Error closing input audio context:', err);
+      }
+      inputAudioContextRef.current = null;
     }
-    if (outputAudioContextRef.current) {
-      outputAudioContextRef.current.close();
+    if (outputAudioContextRef.current && outputAudioContextRef.current.state !== 'closed') {
+      try {
+        await outputAudioContextRef.current.close().catch(console.warn);
+      } catch (err) {
+        console.warn('Error closing output audio context:', err);
+      }
+      outputAudioContextRef.current = null;
     }
     
-    activeSourcesRef.current.forEach(source => source.stop());
+    activeSourcesRef.current.forEach(source => {
+      try {
+        source.stop();
+      } catch (err) {
+        // Source may already be stopped
+      }
+    });
     activeSourcesRef.current.clear();
     
     setCallStatus(CallStatus.ENDED);
     sessionPromiseRef.current = null;
-    inputAudioContextRef.current = null;
-    outputAudioContextRef.current = null;
+    isMutedRef.current = false;
   }, []);
 
   const startCall = async () => {
@@ -103,10 +186,28 @@ export default function PakBankDemo() {
           systemInstruction: SYSTEM_INSTRUCTION,
           inputAudioTranscription: {},
           outputAudioTranscription: {},
+          tools: [{
+            functionDeclarations: [
+              checkBalanceFn,
+              blockCardFn,
+              getLoanInfoFn,
+              scheduleAppointmentFn
+            ]
+          }],
         },
         callbacks: {
-          onopen: () => {
+          onopen: async () => {
             setCallStatus(CallStatus.ACTIVE);
+            
+            // Resolve and store the session
+            try {
+              const session = await sessionPromiseRef.current;
+              sessionRef.current = session;
+            } catch (err) {
+              console.error('Failed to resolve session:', err);
+              setCallStatus(CallStatus.ERROR);
+              return;
+            }
             
             if (inputAudioContextRef.current && micStreamRef.current) {
               const source = inputAudioContextRef.current.createMediaStreamSource(micStreamRef.current);
@@ -114,13 +215,20 @@ export default function PakBankDemo() {
               scriptProcessorRef.current = scriptProcessor;
 
               scriptProcessor.onaudioprocess = (e) => {
-                if (isMuted) return;
+                // Use ref to avoid stale closure
+                if (isMutedRef.current) return;
+                
                 const inputData = e.inputBuffer.getChannelData(0);
                 const pcmBlob = createPCMBlob(inputData);
                 
-                sessionPromiseRef.current?.then((session) => {
-                  session.sendRealtimeInput({ media: pcmBlob });
-                });
+                // Use stored session ref instead of promise
+                if (sessionRef.current) {
+                  try {
+                    sessionRef.current.sendRealtimeInput({ media: pcmBlob });
+                  } catch (err) {
+                    console.error('Failed to send audio input:', err);
+                  }
+                }
               };
 
               source.connect(scriptProcessor);
@@ -137,21 +245,115 @@ export default function PakBankDemo() {
               setTranscriptions(prev => [...prev, { text, sender: 'agent', timestamp: Date.now() }]);
             }
 
+            // Handle automated task execution (function calls)
+            if (message.toolCall) {
+              for (const fc of message.toolCall.functionCalls) {
+                const taskName = fc.name;
+                const args = fc.args || {};
+                
+                setExecutingTask(taskName);
+                
+                // Simulate task execution
+                setTimeout(() => {
+                  let result = {};
+                  let taskDescription = '';
+                  
+                  switch (taskName) {
+                    case 'check_balance':
+                      result = { 
+                        balance: accountBalance, 
+                        currency: 'PKR',
+                        account_type: args.account_type || 'savings'
+                      };
+                      taskDescription = `Checked account balance: Rs. ${accountBalance.toLocaleString()}`;
+                      setRecentTasks(prev => [...prev, { 
+                        task: 'Balance Check', 
+                        time: new Date().toLocaleTimeString(),
+                        details: `Rs. ${accountBalance.toLocaleString()}`
+                      }]);
+                      break;
+                      
+                    case 'block_card':
+                      setCardStatus('blocked');
+                      result = { 
+                        status: 'blocked', 
+                        message: 'Card has been blocked successfully. A new card will be issued within 5-7 business days.'
+                      };
+                      taskDescription = `Blocked card (Reason: ${args.reason || 'Lost/Stolen'})`;
+                      setRecentTasks(prev => [...prev, { 
+                        task: 'Card Blocked', 
+                        time: new Date().toLocaleTimeString(),
+                        details: args.reason || 'Lost/Stolen'
+                      }]);
+                      break;
+                      
+                    case 'get_loan_information':
+                      const loanInfo = {
+                        personal: { rate: '18%', max_amount: '5,000,000 PKR', tenure: '5 years' },
+                        home: { rate: '12%', max_amount: '50,000,000 PKR', tenure: '25 years' },
+                        car: { rate: '15%', max_amount: '10,000,000 PKR', tenure: '7 years' }
+                      };
+                      const loanType = args.loan_type?.toLowerCase() || 'personal';
+                      result = loanInfo[loanType] || loanInfo.personal;
+                      taskDescription = `Retrieved ${loanType} loan information`;
+                      setRecentTasks(prev => [...prev, { 
+                        task: 'Loan Information', 
+                        time: new Date().toLocaleTimeString(),
+                        details: loanType
+                      }]);
+                      break;
+                      
+                    case 'schedule_appointment':
+                      const appointmentDate = args.preferred_date || 'Next available slot';
+                      result = { 
+                        appointment_id: 'APT-' + Math.random().toString(36).substr(2, 9).toUpperCase(),
+                        date: appointmentDate,
+                        status: 'scheduled'
+                      };
+                      taskDescription = `Scheduled appointment for: ${args.purpose}`;
+                      setRecentTasks(prev => [...prev, { 
+                        task: 'Appointment Scheduled', 
+                        time: new Date().toLocaleTimeString(),
+                        details: args.purpose
+                      }]);
+                      break;
+                  }
+                  
+                  // Send tool response back to agent
+                  sessionPromise.then(s => {
+                    s.sendToolResponse({
+                      functionResponses: {
+                        id: fc.id,
+                        name: taskName,
+                        response: result
+                      }
+                    });
+                  });
+                  
+                  setExecutingTask(null);
+                }, 1500); // Simulate 1.5s task execution
+              }
+            }
+
             const base64Audio = message.serverContent?.modelTurn?.parts[0]?.inlineData?.data;
             if (base64Audio && outputAudioContextRef.current) {
-              const ctx = outputAudioContextRef.current;
-              nextStartTimeRef.current = Math.max(nextStartTimeRef.current, ctx.currentTime);
-              
-              const audioBuffer = await decodeAudioData(decode(base64Audio), ctx, 24000, 1);
-              const source = ctx.createBufferSource();
-              source.buffer = audioBuffer;
-              source.connect(ctx.destination);
-              
-              source.onended = () => activeSourcesRef.current.delete(source);
-              activeSourcesRef.current.add(source);
-              
-              source.start(nextStartTimeRef.current);
-              nextStartTimeRef.current += audioBuffer.duration;
+              try {
+                const ctx = outputAudioContextRef.current;
+                nextStartTimeRef.current = Math.max(nextStartTimeRef.current, ctx.currentTime);
+                
+                const audioBuffer = await decodeAudioData(decode(base64Audio), ctx, 24000, 1);
+                const source = ctx.createBufferSource();
+                source.buffer = audioBuffer;
+                source.connect(ctx.destination);
+                
+                source.onended = () => activeSourcesRef.current.delete(source);
+                activeSourcesRef.current.add(source);
+                
+                source.start(nextStartTimeRef.current);
+                nextStartTimeRef.current += audioBuffer.duration;
+              } catch (err) {
+                console.error('Error processing audio output:', err);
+              }
             }
 
             if (message.serverContent?.interrupted) {
@@ -185,10 +387,18 @@ export default function PakBankDemo() {
     };
   }, [stopCall]);
 
-  const toggleMute = () => setIsMuted(!isMuted);
+  const toggleMute = () => {
+    isMutedRef.current = !isMutedRef.current;
+    setIsMuted(isMutedRef.current);
+  };
 
   return (
-    <div className="w-full max-w-4xl mx-auto bg-surface-card rounded-2xl shadow-xl overflow-hidden border border-white/5">
+    <>
+      <TaskExecutionIndicator 
+        task={executingTask ? executingTask.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : ''}
+        isExecuting={!!executingTask}
+      />
+      <div className="w-full max-w-4xl mx-auto bg-surface-card rounded-2xl shadow-xl overflow-hidden border border-white/5">
       {/* Header */}
       <div className="bg-gradient-to-r from-primary/20 to-primary/10 p-4 flex items-center justify-between border-b border-white/5">
         <div className="flex items-center space-x-3">
@@ -282,7 +492,32 @@ export default function PakBankDemo() {
           </div>
         )}
       </div>
+      
+      {/* Recent Tasks Panel */}
+      {recentTasks.length > 0 && (
+        <div className="mt-4 bg-surface-dark rounded-xl p-4 border border-white/5">
+          <h4 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+            <span className="material-symbols-outlined text-primary text-lg">task_alt</span>
+            Recent Automated Tasks
+          </h4>
+          <div className="space-y-2">
+            {recentTasks.slice(-3).reverse().map((task, idx) => (
+              <div key={idx} className="flex items-center justify-between text-xs bg-surface-card rounded-lg p-2 border border-white/5">
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                  <span className="text-white font-medium">{task.task}</span>
+                </div>
+                <div className="flex items-center gap-3 text-secondary-grey">
+                  <span className="text-[10px]">{task.details}</span>
+                  <span className="text-[10px]">{task.time}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
+    </>
   );
 }
 

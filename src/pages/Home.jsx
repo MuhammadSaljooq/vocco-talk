@@ -1,5 +1,9 @@
 import { Link } from 'react-router-dom'
-import VoccoTalkAgent from '../components/VoccoTalkAgent'
+import { lazy, Suspense } from 'react'
+import { LoadingSpinner } from '../components/FallbackUI'
+
+// Lazy load heavy component
+const VoccoTalkAgent = lazy(() => import('../components/VoccoTalkAgent'))
 
 export default function Home() {
   return (
@@ -11,40 +15,40 @@ export default function Home() {
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImEiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTTAgNDBWMGg0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDMpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjYSkiLz48L3N2Zz4=')] opacity-[0.03] mix-blend-overlay"></div>
       </div>
       
-      <main className="relative z-10 pt-32 pb-20">
-        <section className="max-w-[1200px] mx-auto px-6 mb-32">
-          <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
-            <div className="flex-1 text-center lg:text-left z-20">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/20 bg-primary/5 backdrop-blur-md mb-8 hover:bg-primary/10 transition-colors cursor-default">
-                <span className="relative flex h-2 w-2">
+      <main className="relative z-10 pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 md:pb-20">
+        <section className="max-w-[1200px] mx-auto px-4 sm:px-6 mb-16 sm:mb-24 md:mb-32">
+          <div className="flex flex-col lg:flex-row items-center gap-8 sm:gap-12 lg:gap-24">
+            <div className="flex-1 text-center lg:text-left z-20 w-full">
+              <div className="inline-flex items-center gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border border-primary/20 bg-primary/5 backdrop-blur-md mb-6 sm:mb-8 hover:bg-primary/10 transition-colors cursor-default">
+                <span className="relative flex h-1.5 w-1.5 sm:h-2 sm:w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                  <span className="relative inline-flex rounded-full h-full w-full bg-primary"></span>
                 </span>
-                <span className="text-xs font-semibold text-primary uppercase tracking-widest">v2.0 Now Available</span>
+                <span className="text-[10px] sm:text-xs font-semibold text-primary uppercase tracking-widest">v2.0 Now Available</span>
               </div>
-              <h1 className="text-5xl sm:text-7xl font-bold tracking-tight leading-[1.1] text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/50 mb-6 drop-shadow-sm">
-                Voice AI <br/>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/50 mb-4 sm:mb-6 drop-shadow-sm px-2 sm:px-0">
+                Voice AI <br className="hidden sm:block"/>
                 <span className="text-white">Infrastructure</span>
               </h1>
-              <p className="text-lg text-secondary-grey font-light leading-relaxed max-w-xl mx-auto lg:mx-0 mb-10">
+              <p className="text-base sm:text-lg text-secondary-grey font-light leading-relaxed max-w-xl mx-auto lg:mx-0 mb-6 sm:mb-8 md:mb-10 px-2 sm:px-0">
                 Build ultra-low latency voice agents that sound human. Seamlessly integrated, infinitely scalable, and engineered for the modern stack.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Link to="/create-agent" className="h-12 px-8 rounded-full bg-white text-black font-bold text-sm hover:scale-105 transition-transform shadow-[0_0_30px_-5px_rgba(255,255,255,0.3)] flex items-center justify-center gap-2">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start px-2 sm:px-0">
+                <Link to="/create-agent" className="h-11 sm:h-12 px-6 sm:px-8 rounded-full bg-white text-black font-bold text-xs sm:text-sm hover:scale-105 transition-transform shadow-[0_0_30px_-5px_rgba(255,255,255,0.3)] flex items-center justify-center gap-2">
                   Start Building
-                  <span className="material-symbols-outlined text-lg">arrow_forward</span>
+                  <span className="material-symbols-outlined text-base sm:text-lg">arrow_forward</span>
                 </Link>
-                <button className="h-12 px-8 rounded-full bg-white/5 border border-white/10 text-white font-bold text-sm hover:bg-white/10 transition-all flex items-center justify-center gap-2 backdrop-blur-sm group">
+                <button className="h-11 sm:h-12 px-6 sm:px-8 rounded-full bg-white/5 border border-white/10 text-white font-bold text-xs sm:text-sm hover:bg-white/10 transition-all flex items-center justify-center gap-2 backdrop-blur-sm group">
                   Read Docs
-                  <span className="material-symbols-outlined text-lg text-secondary-grey group-hover:text-white transition-colors">code</span>
+                  <span className="material-symbols-outlined text-base sm:text-lg text-secondary-grey group-hover:text-white transition-colors">code</span>
                 </button>
               </div>
-              <div className="mt-12 pt-8 border-t border-white/5">
-                <p className="text-[10px] uppercase tracking-widest text-secondary-grey mb-4 font-bold">Trusted by engineering teams at</p>
-                <div className="flex flex-wrap justify-center lg:justify-start gap-8 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-                  <div className="font-bold text-lg text-white flex items-center gap-2 group"><div className="size-3 bg-white group-hover:bg-primary transition-colors rounded-full"></div>Acme</div>
-                  <div className="font-bold text-lg text-white flex items-center gap-2 group"><div className="size-3 bg-white group-hover:bg-accent transition-colors rounded-sm rotate-45"></div>Globex</div>
-                  <div className="font-bold text-lg text-white flex items-center gap-2 group"><div className="size-3 bg-white group-hover:bg-secondary-grey transition-colors rounded-sm"></div>Soylent</div>
+              <div className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-white/5 px-2 sm:px-0">
+                <p className="text-[9px] sm:text-[10px] uppercase tracking-widest text-secondary-grey mb-3 sm:mb-4 font-bold">Trusted by engineering teams at</p>
+                <div className="flex flex-wrap justify-center lg:justify-start gap-4 sm:gap-6 lg:gap-8 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+                  <div className="font-bold text-sm sm:text-base lg:text-lg text-white flex items-center gap-1.5 sm:gap-2 group"><div className="size-2.5 sm:size-3 bg-white group-hover:bg-primary transition-colors rounded-full"></div>Acme</div>
+                  <div className="font-bold text-sm sm:text-base lg:text-lg text-white flex items-center gap-1.5 sm:gap-2 group"><div className="size-2.5 sm:size-3 bg-white group-hover:bg-accent transition-colors rounded-sm rotate-45"></div>Globex</div>
+                  <div className="font-bold text-sm sm:text-base lg:text-lg text-white flex items-center gap-1.5 sm:gap-2 group"><div className="size-2.5 sm:size-3 bg-white group-hover:bg-secondary-grey transition-colors rounded-sm"></div>Soylent</div>
                 </div>
               </div>
             </div>
@@ -52,29 +56,31 @@ export default function Home() {
               <div className="absolute inset-0 bg-primary/20 blur-[80px] rounded-full animate-pulse-slow"></div>
               <div className="relative group">
                 <div className="absolute -inset-[1px] bg-gradient-to-br from-primary/50 via-white/10 to-accent/50 rounded-2xl blur-sm opacity-30 group-hover:opacity-60 transition-opacity duration-700"></div>
-                <VoccoTalkAgent compact={true} />
+                <Suspense fallback={<div className="min-h-[400px] flex items-center justify-center"><LoadingSpinner size="md" text="Loading agent..." /></div>}>
+                  <VoccoTalkAgent compact={true} />
+                </Suspense>
               </div>
             </div>
           </div>
         </section>
         
-        <section id="features" className="max-w-[1200px] mx-auto px-6 py-24 relative">
-          <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Engineered for <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-glow">Scale</span></h2>
-            <p className="text-secondary-grey max-w-2xl mx-auto text-lg font-light">
+        <section id="features" className="max-w-[1200px] mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-24 relative">
+          <div className="text-center mb-12 sm:mb-16 md:mb-20">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 px-2 sm:px-0">Engineered for <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-glow">Scale</span></h2>
+            <p className="text-secondary-grey max-w-2xl mx-auto text-base sm:text-lg font-light px-2 sm:px-0">
               Our infrastructure handles the heavy lifting so you can focus on building great conversational experiences.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             <div className="group relative md:col-span-2 overflow-hidden rounded-3xl bg-[#0A0C0E] border border-white/5 transition-all duration-500 hover:border-primary/30 hover:shadow-[0_0_40px_-10px_rgba(91,140,90,0.15)]">
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[80px] rounded-full pointer-events-none group-hover:bg-primary/20 transition-colors duration-500"></div>
-              <div className="p-10 relative z-10 h-full flex flex-col justify-between">
+              <div className="p-6 sm:p-8 md:p-10 relative z-10 h-full flex flex-col justify-between">
                 <div>
                   <div className="inline-flex items-center justify-center size-12 rounded-xl bg-white/5 border border-white/10 text-primary mb-6 group-hover:bg-primary/10 group-hover:scale-110 transition-all duration-300 shadow-[0_0_15px_-5px_rgba(91,140,90,0.2)]">
                     <span className="material-symbols-outlined">bolt</span>
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-3">Global Low Latency</h3>
-                  <p className="text-secondary-grey leading-relaxed max-w-md">Our edge network processes voice data closer to the user, ensuring sub-500ms response times worldwide.</p>
+                  <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3">Global Low Latency</h3>
+                  <p className="text-sm sm:text-base text-secondary-grey leading-relaxed max-w-md">Our edge network processes voice data closer to the user, ensuring sub-500ms response times worldwide.</p>
                 </div>
                 <div className="mt-8 h-32 w-full bg-surface-card rounded-xl border border-white/5 relative overflow-hidden flex items-end px-6 pb-0 gap-1.5 shadow-inner">
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-primary/5"></div>
@@ -89,12 +95,12 @@ export default function Home() {
             </div>
             <div className="group relative overflow-hidden rounded-3xl bg-[#0A0C0E] border border-white/5 transition-all duration-500 hover:border-accent/30 hover:shadow-[0_0_40px_-10px_rgba(227,101,91,0.15)]">
               <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/5 blur-[80px] rounded-full pointer-events-none group-hover:bg-accent/10 transition-colors duration-500"></div>
-              <div className="p-10 relative z-10">
+              <div className="p-6 sm:p-8 md:p-10 relative z-10">
                 <div className="inline-flex items-center justify-center size-12 rounded-xl bg-white/5 border border-white/10 text-accent mb-6 group-hover:bg-accent/10 group-hover:scale-110 transition-all duration-300">
                   <span className="material-symbols-outlined">graphic_eq</span>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-3">Natural Prosody</h3>
-                <p className="text-secondary-grey leading-relaxed text-sm">Models that understand emotion, pacing, and tone for human-like interaction.</p>
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3">Natural Prosody</h3>
+                <p className="text-sm text-secondary-grey leading-relaxed">Models that understand emotion, pacing, and tone for human-like interaction.</p>
                 <div className="mt-8 flex items-center gap-3 p-4 bg-surface-card rounded-xl border border-white/5 group-hover:border-accent/20 transition-colors">
                   <button className="size-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-110 transition-transform shadow-lg">
                     <span className="material-symbols-outlined text-xl">play_arrow</span>
@@ -110,12 +116,12 @@ export default function Home() {
               </div>
             </div>
             <div className="group relative overflow-hidden rounded-3xl bg-[#0A0C0E] border border-white/5 transition-all duration-500 hover:border-white/20 hover:shadow-[0_0_40px_-10px_rgba(255,255,255,0.05)]">
-              <div className="p-10 relative z-10">
+              <div className="p-6 sm:p-8 md:p-10 relative z-10">
                 <div className="inline-flex items-center justify-center size-12 rounded-xl bg-white/5 border border-white/10 text-white mb-6 group-hover:bg-white/10 group-hover:scale-110 transition-all duration-300">
                   <span className="material-symbols-outlined">bar_chart</span>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-3">Real-time Analytics</h3>
-                <p className="text-secondary-grey leading-relaxed text-sm mb-6">Live dashboards for call volume, sentiment analysis, and resolution rates.</p>
+                <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3">Real-time Analytics</h3>
+                <p className="text-sm text-secondary-grey leading-relaxed mb-4 sm:mb-6">Live dashboards for call volume, sentiment analysis, and resolution rates.</p>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-surface-card p-3 rounded-lg border border-white/5 group-hover:border-primary/20 transition-colors">
                     <div className="text-[10px] text-secondary-grey uppercase tracking-wider mb-1">Success</div>
@@ -134,8 +140,8 @@ export default function Home() {
                   <div className="inline-flex items-center justify-center size-12 rounded-xl bg-white/5 border border-white/10 text-white mb-6 group-hover:bg-white/10 group-hover:scale-110 transition-all duration-300">
                     <span className="material-symbols-outlined">extension</span>
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-3">One-Click Integration</h3>
-                  <p className="text-secondary-grey leading-relaxed mb-6">Connect to your existing stack with a few lines of code. Webhook support for all major CRMs.</p>
+                  <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 sm:mb-3">One-Click Integration</h3>
+                  <p className="text-sm sm:text-base text-secondary-grey leading-relaxed mb-4 sm:mb-6">Connect to your existing stack with a few lines of code. Webhook support for all major CRMs.</p>
                   <div className="flex flex-wrap gap-2">
                     <span className="px-2 py-1 rounded-md bg-white/5 border border-white/5 text-xs text-secondary-grey font-mono hover:bg-white/10 cursor-default transition-colors">HubSpot</span>
                     <span className="px-2 py-1 rounded-md bg-white/5 border border-white/5 text-xs text-secondary-grey font-mono hover:bg-white/10 cursor-default transition-colors">Salesforce</span>
@@ -178,20 +184,20 @@ export default function Home() {
           </div>
         </section>
         
-        <section className="border-y border-white/5 bg-[#050607]/50 backdrop-blur-sm py-32 relative overflow-hidden">
+        <section className="border-y border-white/5 bg-[#050607]/50 backdrop-blur-sm py-16 sm:py-24 md:py-32 relative overflow-hidden">
           <div className="absolute inset-0 bg-[url('https://lh3.googleusercontent.com/aida-public/AB6AXuAWJagYE20nX6UNHnibfKAPODf8-jMrlFzX2vwgNJCBp18eJy9fS8qgs2C9ul2rfo8Q0vMUUtOCL73sBpOnFsW3THtgY6A8y-L8hBgIzgW97JgCgUbO5TVTTheYqAj0vceiQKewvqtCayV3zWqLHQUw-cy--2PH1w_STHdBcmOAl_gbLGdOrS2U5z__Me9LxeEM64AUiEujS-PHEgV7bjuqZ2Ba8bmLqKOFwjsOhqyE0kdzlAUsPA8wnmVvKjeXOAeo1Gb8VmP18A')] opacity-[0.05] bg-cover bg-center mix-blend-screen"></div>
           <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
-          <div className="max-w-[1200px] mx-auto px-6 relative z-10">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 relative z-10">
+            <div className="flex flex-col md:flex-row justify-between items-end mb-8 sm:mb-12 md:mb-16 gap-6 sm:gap-8">
               <div>
-                <h2 className="text-4xl font-bold text-white mb-4">Total Observability</h2>
-                <p className="text-secondary-grey text-lg max-w-lg">Monitor every interaction in real-time. Gain insights into user sentiment, latency, and agent performance.</p>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">Total Observability</h2>
+                <p className="text-sm sm:text-base md:text-lg text-secondary-grey max-w-lg">Monitor every interaction in real-time. Gain insights into user sentiment, latency, and agent performance.</p>
               </div>
-              <button className="text-white hover:text-primary transition-colors font-medium flex items-center gap-2 group">
+              <button className="text-sm sm:text-base text-white hover:text-primary transition-colors font-medium flex items-center gap-2 group">
                 Explore Dashboard <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
               </button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 h-[500px]">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6 h-auto md:h-[500px]">
               <div className="col-span-1 md:col-span-2 row-span-2 rounded-3xl border border-white/10 bg-surface-card relative overflow-hidden group shadow-2xl">
                 <div className="absolute inset-0 bg-[url('https://lh3.googleusercontent.com/aida-public/AB6AXuAWJagYE20nX6UNHnibfKAPODf8-jMrlFzX2vwgNJCBp18eJy9fS8qgs2C9ul2rfo8Q0vMUUtOCL73sBpOnFsW3THtgY6A8y-L8hBgIzgW97JgCgUbO5TVTTheYqAj0vceiQKewvqtCayV3zWqLHQUw-cy--2PH1w_STHdBcmOAl_gbLGdOrS2U5z__Me9LxeEM64AUiEujS-PHEgV7bjuqZ2Ba8bmLqKOFwjsOhqyE0kdzlAUsPA8wnmVvKjeXOAeo1Gb8VmP18A')] bg-cover bg-center opacity-40 mix-blend-luminosity group-hover:scale-105 transition-transform duration-1000"></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050607] via-[#050607]/60 to-transparent"></div>
@@ -218,13 +224,13 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <div className="col-span-1 md:col-span-1 rounded-3xl border border-white/10 bg-surface-dark p-8 flex flex-col justify-center items-center text-center relative overflow-hidden group hover:bg-white/5 transition-colors">
+              <div className="col-span-1 md:col-span-1 rounded-3xl border border-white/10 bg-surface-dark p-6 sm:p-8 flex flex-col justify-center items-center text-center relative overflow-hidden group hover:bg-white/5 transition-colors min-h-[150px] sm:min-h-[200px]">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <span className="material-symbols-outlined text-4xl text-primary mb-4 group-hover:scale-110 transition-transform duration-300">support_agent</span>
                 <div className="text-4xl font-bold text-white mb-1">850+</div>
                 <div className="text-xs text-secondary-grey uppercase tracking-widest font-bold">Active Agents</div>
               </div>
-              <div className="col-span-1 md:col-span-1 rounded-3xl border border-white/10 bg-surface-dark p-8 flex flex-col justify-center items-center text-center relative overflow-hidden group hover:bg-white/5 transition-colors">
+              <div className="col-span-1 md:col-span-1 rounded-3xl border border-white/10 bg-surface-dark p-6 sm:p-8 flex flex-col justify-center items-center text-center relative overflow-hidden group hover:bg-white/5 transition-colors min-h-[150px] sm:min-h-[200px]">
                 <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <span className="material-symbols-outlined text-4xl text-accent mb-4 group-hover:scale-110 transition-transform duration-300">forum</span>
                 <div className="text-4xl font-bold text-white mb-1">2.4M</div>
@@ -253,17 +259,17 @@ export default function Home() {
           </div>
         </section>
         
-        <section className="py-32 relative text-center overflow-hidden">
+        <section className="py-16 sm:py-24 md:py-32 relative text-center overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-primary/10 pointer-events-none"></div>
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-primary/20 blur-[120px] rounded-full pointer-events-none"></div>
-          <div className="relative z-10 max-w-2xl mx-auto px-6">
-            <h2 className="text-5xl md:text-6xl font-bold text-white tracking-tight mb-8">Ready to deploy?</h2>
-            <p className="text-xl text-secondary-grey mb-12 font-light">Join thousands of developers building the next generation of voice interfaces.</p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-              <Link to="/create-agent" className="w-full sm:w-auto h-14 px-10 rounded-full bg-white text-black font-bold text-base hover:scale-105 transition-transform shadow-[0_0_40px_-5px_rgba(255,255,255,0.4)]">
+          <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white tracking-tight mb-4 sm:mb-6 md:mb-8 px-2 sm:px-0">Ready to deploy?</h2>
+            <p className="text-base sm:text-lg md:text-xl text-secondary-grey mb-8 sm:mb-10 md:mb-12 font-light px-2 sm:px-0">Join thousands of developers building the next generation of voice interfaces.</p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 px-4 sm:px-0">
+              <Link to="/create-agent" className="w-full sm:w-auto h-12 sm:h-14 px-8 sm:px-10 rounded-full bg-white text-black font-bold text-sm sm:text-base hover:scale-105 transition-transform shadow-[0_0_40px_-5px_rgba(255,255,255,0.4)] flex items-center justify-center">
                 Get Started Free
               </Link>
-              <Link to="/contact" className="w-full sm:w-auto h-14 px-10 rounded-full bg-transparent border border-white/10 hover:border-white text-white font-bold text-base transition-colors">
+              <Link to="/contact" className="w-full sm:w-auto h-12 sm:h-14 px-8 sm:px-10 rounded-full bg-transparent border border-white/10 hover:border-white text-white font-bold text-sm sm:text-base transition-colors flex items-center justify-center">
                 Contact Sales
               </Link>
             </div>

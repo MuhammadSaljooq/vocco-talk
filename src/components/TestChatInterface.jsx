@@ -25,6 +25,7 @@ export default function TestChatInterface({ agentConfig, onConfigChange }) {
   const inputAudioContextRef = useRef(null);
   const outputAudioContextRef = useRef(null);
   const sessionPromiseRef = useRef(null);
+  const sessionRef = useRef(null);
   const scriptProcessorRef = useRef(null);
   const micStreamRef = useRef(null);
   const analyserRef = useRef(null);
@@ -123,9 +124,20 @@ export default function TestChatInterface({ agentConfig, onConfigChange }) {
           outputAudioTranscription: {},
         },
         callbacks: {
-          onopen: () => {
+          onopen: async () => {
             setStatus(SessionStatus.CONNECTED);
             setIsProcessing(false);
+
+            // Resolve and store the session
+            try {
+              const session = await sessionPromiseRef.current;
+              sessionRef.current = session;
+            } catch (err) {
+              console.error('Failed to resolve session:', err);
+              setError('Failed to establish connection. Please try again.');
+              setStatus(SessionStatus.ERROR);
+              return;
+            }
 
             if (inputAudioContextRef.current && micStreamRef.current) {
               const source = inputAudioContextRef.current.createMediaStreamSource(micStreamRef.current);
@@ -138,9 +150,14 @@ export default function TestChatInterface({ agentConfig, onConfigChange }) {
                 setIsListening(volume > 0.01);
 
                 const pcmBlob = createPCMBlob(inputData);
-                sessionPromiseRef.current?.then((session) => {
-                  session.sendRealtimeInput({ media: pcmBlob });
-                });
+                // Use stored session ref instead of promise
+                if (sessionRef.current) {
+                  try {
+                    sessionRef.current.sendRealtimeInput({ media: pcmBlob });
+                  } catch (err) {
+                    console.error('Failed to send audio input:', err);
+                  }
+                }
               };
 
               source.connect(scriptProcessor);
@@ -171,32 +188,37 @@ export default function TestChatInterface({ agentConfig, onConfigChange }) {
 
             const base64Audio = message.serverContent?.modelTurn?.parts[0]?.inlineData?.data;
             if (base64Audio && outputAudioContextRef.current) {
-              setIsSpeaking(true);
-              setIsListening(false);
-              setIsProcessing(false);
+              try {
+                setIsSpeaking(true);
+                setIsListening(false);
+                setIsProcessing(false);
 
-              const ctx = outputAudioContextRef.current;
-              nextStartTimeRef.current = Math.max(nextStartTimeRef.current, ctx.currentTime);
+                const ctx = outputAudioContextRef.current;
+                nextStartTimeRef.current = Math.max(nextStartTimeRef.current, ctx.currentTime);
 
-              const audioBuffer = await decodeAudioData(decode(base64Audio), ctx, 24000, 1);
+                const audioBuffer = await decodeAudioData(decode(base64Audio), ctx, 24000, 1);
 
-              const gainNode = ctx.createGain();
-              gainNode.gain.value = 1.0;
+                const gainNode = ctx.createGain();
+                gainNode.gain.value = 1.0;
 
-              const source = ctx.createBufferSource();
-              source.buffer = audioBuffer;
-              source.connect(gainNode);
-              gainNode.connect(analyserRef.current);
-              gainNode.connect(ctx.destination);
+                const source = ctx.createBufferSource();
+                source.buffer = audioBuffer;
+                source.connect(gainNode);
+                gainNode.connect(analyserRef.current);
+                gainNode.connect(ctx.destination);
 
-              source.onended = () => {
-                activeSourcesRef.current.delete(source);
-                if (activeSourcesRef.current.size === 0) setIsSpeaking(false);
-              };
-              activeSourcesRef.current.add(source);
+                source.onended = () => {
+                  activeSourcesRef.current.delete(source);
+                  if (activeSourcesRef.current.size === 0) setIsSpeaking(false);
+                };
+                activeSourcesRef.current.add(source);
 
-              source.start(nextStartTimeRef.current);
-              nextStartTimeRef.current += audioBuffer.duration;
+                source.start(nextStartTimeRef.current);
+                nextStartTimeRef.current += audioBuffer.duration;
+              } catch (err) {
+                console.error('Error processing audio output:', err);
+                setIsSpeaking(false);
+              }
             }
 
             if (message.serverContent?.interrupted) {
@@ -234,7 +256,17 @@ export default function TestChatInterface({ agentConfig, onConfigChange }) {
     }
   };
 
-  const stopVoiceSession = () => {
+  const stopVoiceSession = async () => {
+    // Close session properly
+    if (sessionRef.current) {
+      try {
+        await sessionRef.current.close();
+      } catch (err) {
+        console.warn('Error closing session:', err);
+      }
+      sessionRef.current = null;
+    }
+
     if (micStreamRef.current) {
       micStreamRef.current.getTracks().forEach(track => track.stop());
       micStreamRef.current = null;
@@ -243,20 +275,35 @@ export default function TestChatInterface({ agentConfig, onConfigChange }) {
       scriptProcessorRef.current.disconnect();
       scriptProcessorRef.current = null;
     }
-    if (inputAudioContextRef.current) {
-      inputAudioContextRef.current.close();
+    if (inputAudioContextRef.current && inputAudioContextRef.current.state !== 'closed') {
+      try {
+        await inputAudioContextRef.current.close().catch(console.warn);
+      } catch (err) {
+        console.warn('Error closing input audio context:', err);
+      }
       inputAudioContextRef.current = null;
     }
-    if (outputAudioContextRef.current) {
-      outputAudioContextRef.current.close();
+    if (outputAudioContextRef.current && outputAudioContextRef.current.state !== 'closed') {
+      try {
+        await outputAudioContextRef.current.close().catch(console.warn);
+      } catch (err) {
+        console.warn('Error closing output audio context:', err);
+      }
       outputAudioContextRef.current = null;
     }
 
-    activeSourcesRef.current.forEach(source => source.stop());
+    activeSourcesRef.current.forEach(source => {
+      try {
+        source.stop();
+      } catch (err) {
+        // Source may already be stopped
+      }
+    });
     activeSourcesRef.current.clear();
 
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
     }
 
     setStatus(SessionStatus.IDLE);

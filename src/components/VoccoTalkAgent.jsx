@@ -83,31 +83,60 @@ export default function VoccoTalkAgent({ compact = false }) {
   const nextStartTimeRef = useRef(0);
   const activeSourcesRef = useRef(new Set());
   const sessionPromiseRef = useRef(null);
+  const sessionRef = useRef(null);
   const scriptProcessorRef = useRef(null);
   const micStreamRef = useRef(null);
+  const isMutedRef = useRef(false);
 
-  const stopSession = useCallback(() => {
+  const stopSession = useCallback(async () => {
+    // Close session properly
+    if (sessionRef.current) {
+      try {
+        await sessionRef.current.close();
+      } catch (err) {
+        console.warn('Error closing session:', err);
+      }
+      sessionRef.current = null;
+    }
+    
     if (micStreamRef.current) {
       micStreamRef.current.getTracks().forEach(track => track.stop());
+      micStreamRef.current = null;
     }
     if (scriptProcessorRef.current) {
       scriptProcessorRef.current.disconnect();
+      scriptProcessorRef.current = null;
     }
-    if (inputAudioContextRef.current) {
-      inputAudioContextRef.current.close();
+    if (inputAudioContextRef.current && inputAudioContextRef.current.state !== 'closed') {
+      try {
+        await inputAudioContextRef.current.close().catch(console.warn);
+      } catch (err) {
+        console.warn('Error closing input audio context:', err);
+      }
+      inputAudioContextRef.current = null;
     }
-    if (outputAudioContextRef.current) {
-      outputAudioContextRef.current.close();
+    if (outputAudioContextRef.current && outputAudioContextRef.current.state !== 'closed') {
+      try {
+        await outputAudioContextRef.current.close().catch(console.warn);
+      } catch (err) {
+        console.warn('Error closing output audio context:', err);
+      }
+      outputAudioContextRef.current = null;
     }
     
-    activeSourcesRef.current.forEach(source => source.stop());
+    activeSourcesRef.current.forEach(source => {
+      try {
+        source.stop();
+      } catch (err) {
+        // Source may already be stopped
+      }
+    });
     activeSourcesRef.current.clear();
     
     setStatus(SessionStatus.IDLE);
     setIsSpeaking(false);
     sessionPromiseRef.current = null;
-    inputAudioContextRef.current = null;
-    outputAudioContextRef.current = null;
+    isMutedRef.current = false;
   }, []);
 
   const startSession = async () => {
@@ -142,8 +171,18 @@ export default function VoccoTalkAgent({ compact = false }) {
           outputAudioTranscription: {},
         },
         callbacks: {
-          onopen: () => {
+          onopen: async () => {
             setStatus(SessionStatus.CONNECTED);
+            
+            // Resolve and store the session
+            try {
+              const session = await sessionPromiseRef.current;
+              sessionRef.current = session;
+            } catch (err) {
+              console.error('Failed to resolve session:', err);
+              setStatus(SessionStatus.ERROR);
+              return;
+            }
             
             if (inputAudioContextRef.current && micStreamRef.current) {
               const source = inputAudioContextRef.current.createMediaStreamSource(micStreamRef.current);
@@ -151,13 +190,20 @@ export default function VoccoTalkAgent({ compact = false }) {
               scriptProcessorRef.current = scriptProcessor;
 
               scriptProcessor.onaudioprocess = (e) => {
-                if (isMuted) return;
+                // Use ref to avoid stale closure
+                if (isMutedRef.current) return;
+                
                 const inputData = e.inputBuffer.getChannelData(0);
                 const pcmBlob = createPCMBlob(inputData);
                 
-                sessionPromiseRef.current?.then((session) => {
-                  session.sendRealtimeInput({ media: pcmBlob });
-                });
+                // Use stored session ref instead of promise
+                if (sessionRef.current) {
+                  try {
+                    sessionRef.current.sendRealtimeInput({ media: pcmBlob });
+                  } catch (err) {
+                    console.error('Failed to send audio input:', err);
+                  }
+                }
               };
 
               source.connect(scriptProcessor);
@@ -176,23 +222,28 @@ export default function VoccoTalkAgent({ compact = false }) {
 
             const base64Audio = message.serverContent?.modelTurn?.parts[0]?.inlineData?.data;
             if (base64Audio && outputAudioContextRef.current) {
-              setIsSpeaking(true);
-              const ctx = outputAudioContextRef.current;
-              nextStartTimeRef.current = Math.max(nextStartTimeRef.current, ctx.currentTime);
-              
-              const audioBuffer = await decodeAudioData(decode(base64Audio), ctx, 24000, 1);
-              const source = ctx.createBufferSource();
-              source.buffer = audioBuffer;
-              source.connect(ctx.destination);
-              
-              source.onended = () => {
-                activeSourcesRef.current.delete(source);
-                if (activeSourcesRef.current.size === 0) setIsSpeaking(false);
-              };
-              activeSourcesRef.current.add(source);
-              
-              source.start(nextStartTimeRef.current);
-              nextStartTimeRef.current += audioBuffer.duration;
+              try {
+                setIsSpeaking(true);
+                const ctx = outputAudioContextRef.current;
+                nextStartTimeRef.current = Math.max(nextStartTimeRef.current, ctx.currentTime);
+                
+                const audioBuffer = await decodeAudioData(decode(base64Audio), ctx, 24000, 1);
+                const source = ctx.createBufferSource();
+                source.buffer = audioBuffer;
+                source.connect(ctx.destination);
+                
+                source.onended = () => {
+                  activeSourcesRef.current.delete(source);
+                  if (activeSourcesRef.current.size === 0) setIsSpeaking(false);
+                };
+                activeSourcesRef.current.add(source);
+                
+                source.start(nextStartTimeRef.current);
+                nextStartTimeRef.current += audioBuffer.duration;
+              } catch (err) {
+                console.error('Error processing audio output:', err);
+                setIsSpeaking(false);
+              }
             }
 
             if (message.serverContent?.interrupted) {
@@ -227,7 +278,10 @@ export default function VoccoTalkAgent({ compact = false }) {
     };
   }, [stopSession]);
 
-  const toggleMute = () => setIsMuted(!isMuted);
+  const toggleMute = () => {
+    isMutedRef.current = !isMutedRef.current;
+    setIsMuted(isMutedRef.current);
+  };
 
   // Compact version for hero section
   if (compact) {

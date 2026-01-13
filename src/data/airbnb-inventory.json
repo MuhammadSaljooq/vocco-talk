@@ -1,0 +1,358 @@
+{
+  "properties": [
+    {
+      "id": 1,
+      "name": "Luxury Studio Gulberg",
+      "location": "Lahore, Gulberg III",
+      "pricePerNight": 12000,
+      "currency": "PKR",
+      "rating": 4.8,
+      "reviews": 234,
+      "host": {
+        "name": "Ahmed Khan",
+        "isSuperhost": true,
+        "contact": "+92 300 1234567"
+      },
+      "thumbnail": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400",
+      "images": [
+        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800",
+        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800",
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800",
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800",
+        "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?w=800"
+      ],
+      "description": "Modern studio apartment with stunning city views and premium amenities. Located in the heart of Gulberg, this property offers easy access to shopping, dining, and entertainment.",
+      "amenities": [
+        "WiFi",
+        "Pool",
+        "Gym",
+        "Kitchen",
+        "Air Conditioning",
+        "TV",
+        "Washer",
+        "Dryer",
+        "Parking"
+      ],
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "maxGuests": 2,
+      "type": "Studio",
+      "entirePlace": true,
+      "wifi": {
+        "network": "Gulberg_Guest_5G",
+        "password": "Lahore123"
+      },
+      "checkIn": "2:00 PM",
+      "checkOut": "11:00 AM",
+      "cancellationPolicy": "Flexible - Free cancellation for 48 hours",
+      "houseRules": [
+        "No smoking",
+        "No parties or events",
+        "Check-in is anytime after 2:00 PM",
+        "Checkout by 11:00 AM"
+      ],
+      "nearbyAttractions": [
+        "MM Alam Road (Dining)",
+        "Liberty Market",
+        "Gaddafi Stadium",
+        "Packages Mall"
+      ],
+      "transportLinks": [
+        "Gulberg Metro Bus Station",
+        "Uber/Careem Hub",
+        "Lahore Airport (20 mins)"
+      ],
+      "safetyFeatures": [
+        "Smoke detector",
+        "Carbon monoxide detector",
+        "First aid kit",
+        "Fire extinguisher"
+      ],
+      "cleaningInfo": "Professional cleaning service included",
+      "petPolicy": "Pets not allowed"
+    },
+    {
+      "id": 2,
+      "name": "Modern Penthouse DHA",
+      "location": "Karachi, DHA Phase 6",
+      "pricePerNight": 25000,
+      "currency": "PKR",
+      "rating": 4.9,
+      "reviews": 412,
+      "host": {
+        "name": "Sarah Malik",
+        "isSuperhost": true,
+        "contact": "+92 321 7654321"
+      },
+      "thumbnail": "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?w=400",
+      "images": [
+        "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?w=800",
+        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800",
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800",
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800",
+        "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?w=800",
+        "https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?w=800"
+      ],
+      "description": "Spacious 3-bedroom penthouse with breathtaking sea views and private terrace. Experience luxury living in the heart of DHA with modern amenities and elegant design.",
+      "amenities": [
+        "Sea View",
+        "Terrace",
+        "Full Kitchen",
+        "Parking",
+        "WiFi",
+        "Air Conditioning",
+        "TV",
+        "Washer",
+        "Dryer",
+        "Pool Access"
+      ],
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "maxGuests": 6,
+      "type": "Penthouse",
+      "entirePlace": true,
+      "wifi": {
+        "network": "DHA_Host_Home",
+        "password": "Karachi99"
+      },
+      "checkIn": "3:00 PM",
+      "checkOut": "12:00 PM",
+      "cancellationPolicy": "Moderate - Free cancellation for 5 days",
+      "houseRules": [
+        "No smoking",
+        "No parties or events",
+        "Check-in is anytime after 3:00 PM",
+        "Checkout by 12:00 PM",
+        "Respect neighbors"
+      ],
+      "nearbyAttractions": [
+        "Sea View Beach",
+        "Dolmen Mall Clifton",
+        "Do Darya Dining",
+        "Clifton Beach"
+      ],
+      "transportLinks": [
+        "DHA Bus Services",
+        "Clifton Interchange",
+        "Airport (45 mins)"
+      ],
+      "safetyFeatures": [
+        "Smoke detector",
+        "Carbon monoxide detector",
+        "First aid kit",
+        "Fire extinguisher",
+        "Security system"
+      ],
+      "cleaningInfo": "Professional cleaning service included",
+      "petPolicy": "Pets allowed with prior approval"
+    },
+    {
+      "id": 3,
+      "name": "Cozy Cottage Margalla",
+      "location": "Islamabad, E-7",
+      "pricePerNight": 18000,
+      "currency": "PKR",
+      "rating": 4.7,
+      "reviews": 189,
+      "host": {
+        "name": "Usman Ali",
+        "isSuperhost": false,
+        "contact": "+92 333 9876543"
+      },
+      "thumbnail": "https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?w=400",
+      "images": [
+        "https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?w=800",
+        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800",
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800",
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800"
+      ],
+      "description": "Serene stay near Margalla hills with beautiful garden views. Perfect for nature lovers seeking peace and tranquility in the capital city.",
+      "amenities": [
+        "Garden",
+        "Fireplace",
+        "Hills View",
+        "Pet Friendly",
+        "WiFi",
+        "Kitchen",
+        "Parking",
+        "TV"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "maxGuests": 4,
+      "type": "Cottage",
+      "entirePlace": true,
+      "wifi": {
+        "network": "Margalla_Vibe",
+        "password": "Islamabad00"
+      },
+      "checkIn": "2:00 PM",
+      "checkOut": "11:00 AM",
+      "cancellationPolicy": "Flexible - Free cancellation for 48 hours",
+      "houseRules": [
+        "No smoking",
+        "Pets allowed",
+        "Check-in is anytime after 2:00 PM",
+        "Checkout by 11:00 AM"
+      ],
+      "nearbyAttractions": [
+        "Faisal Mosque",
+        "Daman-e-Koh",
+        "Centaurus Mall",
+        "Margalla Hills National Park"
+      ],
+      "transportLinks": [
+        "Blue Area Metro",
+        "E-7 Taxi Stand",
+        "Motorway Link (15 mins)"
+      ],
+      "safetyFeatures": [
+        "Smoke detector",
+        "First aid kit",
+        "Fire extinguisher"
+      ],
+      "cleaningInfo": "Professional cleaning service included",
+      "petPolicy": "Pets allowed"
+    },
+    {
+      "id": 4,
+      "name": "Downtown Loft Apartment",
+      "location": "Lahore, Model Town",
+      "pricePerNight": 15000,
+      "currency": "PKR",
+      "rating": 4.6,
+      "reviews": 156,
+      "host": {
+        "name": "Fatima Sheikh",
+        "isSuperhost": true,
+        "contact": "+92 301 4567890"
+      },
+      "thumbnail": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400",
+      "images": [
+        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800",
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800",
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800",
+        "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?w=800"
+      ],
+      "description": "Stylish loft apartment in the heart of Model Town. Modern design with high ceilings and natural light throughout.",
+      "amenities": [
+        "WiFi",
+        "Kitchen",
+        "Air Conditioning",
+        "TV",
+        "Washer",
+        "Parking"
+      ],
+      "bedrooms": 2,
+      "bathrooms": 1,
+      "maxGuests": 4,
+      "type": "Apartment",
+      "entirePlace": true,
+      "wifi": {
+        "network": "ModelTown_Guest",
+        "password": "Lahore2024"
+      },
+      "checkIn": "2:00 PM",
+      "checkOut": "11:00 AM",
+      "cancellationPolicy": "Moderate - Free cancellation for 5 days",
+      "houseRules": [
+        "No smoking",
+        "No parties",
+        "Check-in after 2:00 PM",
+        "Checkout by 11:00 AM"
+      ],
+      "nearbyAttractions": [
+        "Model Town Park",
+        "Shopping Centers",
+        "Restaurants"
+      ],
+      "transportLinks": [
+        "Model Town Bus Stop",
+        "Uber/Careem",
+        "Airport (25 mins)"
+      ],
+      "safetyFeatures": [
+        "Smoke detector",
+        "First aid kit"
+      ],
+      "cleaningInfo": "Professional cleaning service included",
+      "petPolicy": "Pets not allowed"
+    },
+    {
+      "id": 5,
+      "name": "Beachfront Villa",
+      "location": "Karachi, Clifton",
+      "pricePerNight": 35000,
+      "currency": "PKR",
+      "rating": 4.9,
+      "reviews": 278,
+      "host": {
+        "name": "Zainab Hassan",
+        "isSuperhost": true,
+        "contact": "+92 322 1112233"
+      },
+      "thumbnail": "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=400",
+      "images": [
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800",
+        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800",
+        "https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?w=800",
+        "https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?w=800"
+      ],
+      "description": "Luxurious beachfront villa with direct beach access. Perfect for families and groups looking for a premium coastal experience.",
+      "amenities": [
+        "Beach Access",
+        "Pool",
+        "Garden",
+        "Full Kitchen",
+        "WiFi",
+        "Air Conditioning",
+        "TV",
+        "Washer",
+        "Dryer",
+        "Parking"
+      ],
+      "bedrooms": 4,
+      "bathrooms": 3,
+      "maxGuests": 8,
+      "type": "Villa",
+      "entirePlace": true,
+      "wifi": {
+        "network": "Clifton_Beach_Villa",
+        "password": "Beach2024"
+      },
+      "checkIn": "3:00 PM",
+      "checkOut": "12:00 PM",
+      "cancellationPolicy": "Strict - 50% refund up to 7 days before",
+      "houseRules": [
+        "No smoking",
+        "No parties",
+        "Check-in after 3:00 PM",
+        "Checkout by 12:00 PM"
+      ],
+      "nearbyAttractions": [
+        "Clifton Beach",
+        "Dolmen Mall",
+        "Seaview",
+        "Beach Park"
+      ],
+      "transportLinks": [
+        "Clifton Bus Stop",
+        "Uber/Careem",
+        "Airport (40 mins)"
+      ],
+      "safetyFeatures": [
+        "Smoke detector",
+        "Carbon monoxide detector",
+        "First aid kit",
+        "Fire extinguisher",
+        "Security guard"
+      ],
+      "cleaningInfo": "Professional cleaning service included",
+      "petPolicy": "Pets allowed with prior approval"
+    }
+  ],
+  "serviceFee": 0.12,
+  "cleaningFee": 2000,
+  "taxRate": 0.13
+}
+

@@ -3,12 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
     <title>Vocco Talk - AI Voice Infrastructure</title>
+    
+    <!-- Preconnect to external domains for faster loading -->
     <link href="https://fonts.googleapis.com" rel="preconnect"/>
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    
+    <!-- DNS prefetch for better performance -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    
+    <!-- Preload critical fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    
+    <!-- Prevent FOUC (Flash of Unstyled Content) - Mobile-friendly -->
+    <style>
+      body { 
+        background-color: #020304;
+        color: #ffffff;
+      }
+      #root {
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+        background-color: #020304;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

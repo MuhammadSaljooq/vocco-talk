@@ -44,6 +44,7 @@ export default function DominosDemo() {
   const nextStartTimeRef = useRef(0);
   const sourcesRef = useRef(new Set());
   const streamRef = useRef(null);
+  const isMutedRef = useRef(false);
 
   const addToCartFn = {
     name: 'add_to_cart',
@@ -59,16 +60,46 @@ export default function DominosDemo() {
     }
   };
 
-  const stopSession = useCallback(() => {
-    if (sessionRef.current) { 
-      sessionRef.current.close(); 
-      sessionRef.current = null; 
+  const stopSession = useCallback(async () => {
+    if (sessionRef.current) {
+      try {
+        await sessionRef.current.close();
+      } catch (err) {
+        console.warn('Error closing session:', err);
+      }
+      sessionRef.current = null;
     }
-    if (streamRef.current) { 
-      streamRef.current.getTracks().forEach(track => track.stop()); 
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
     }
+    if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+      try {
+        await audioContextRef.current.close().catch(console.warn);
+      } catch (err) {
+        console.warn('Error closing audio context:', err);
+      }
+      audioContextRef.current = null;
+    }
+    if (outAudioContextRef.current && outAudioContextRef.current.state !== 'closed') {
+      try {
+        await outAudioContextRef.current.close().catch(console.warn);
+      } catch (err) {
+        console.warn('Error closing output audio context:', err);
+      }
+      outAudioContextRef.current = null;
+    }
+    sourcesRef.current.forEach(source => {
+      try {
+        source.stop();
+      } catch (err) {
+        // Source may already be stopped
+      }
+    });
+    sourcesRef.current.clear();
     setStatus(ConnectionStatus.DISCONNECTED);
     setTranscriptions([]);
+    isMutedRef.current = false;
   }, []);
 
   const startSession = async () => {
@@ -92,16 +123,37 @@ export default function DominosDemo() {
       const sessionPromise = ai.live.connect({
         model: 'gemini-2.5-flash-native-audio-preview-09-2025',
         callbacks: {
-          onopen: () => {
+          onopen: async () => {
             setStatus(ConnectionStatus.CONNECTED);
+            
+            // Resolve and store the session
+            try {
+              const session = await sessionPromise;
+              sessionRef.current = session;
+            } catch (err) {
+              console.error('Failed to resolve session:', err);
+              setStatus(ConnectionStatus.ERROR);
+              return;
+            }
+            
             const source = audioContextRef.current.createMediaStreamSource(stream);
             const scriptProcessor = audioContextRef.current.createScriptProcessor(4096, 1, 1);
             
             scriptProcessor.onaudioprocess = (e) => {
-              if (isMuted) return;
+              // Use ref to avoid stale closure
+              if (isMutedRef.current) return;
+              
               const inputData = e.inputBuffer.getChannelData(0);
               const pcmBlob = createPCMBlob(inputData);
-              sessionPromise.then(session => session.sendRealtimeInput({ media: pcmBlob }));
+              
+              // Use stored session ref instead of promise
+              if (sessionRef.current) {
+                try {
+                  sessionRef.current.sendRealtimeInput({ media: pcmBlob });
+                } catch (err) {
+                  console.error('Failed to send audio input:', err);
+                }
+              }
             };
 
             source.connect(scriptProcessor);
@@ -110,16 +162,20 @@ export default function DominosDemo() {
           onmessage: async (message) => {
             const audioData = message.serverContent?.modelTurn?.parts[0]?.inlineData?.data;
             if (audioData && outAudioContextRef.current) {
-              const ctx = outAudioContextRef.current;
-              nextStartTimeRef.current = Math.max(nextStartTimeRef.current, ctx.currentTime);
-              const buffer = await decodeAudioData(decode(audioData), ctx, 24000, 1);
-              const source = ctx.createBufferSource();
-              source.buffer = buffer;
-              source.connect(ctx.destination);
-              source.onended = () => sourcesRef.current.delete(source);
-              source.start(nextStartTimeRef.current);
-              nextStartTimeRef.current += buffer.duration;
-              sourcesRef.current.add(source);
+              try {
+                const ctx = outAudioContextRef.current;
+                nextStartTimeRef.current = Math.max(nextStartTimeRef.current, ctx.currentTime);
+                const buffer = await decodeAudioData(decode(audioData), ctx, 24000, 1);
+                const source = ctx.createBufferSource();
+                source.buffer = buffer;
+                source.connect(ctx.destination);
+                source.onended = () => sourcesRef.current.delete(source);
+                sourcesRef.current.add(source);
+                source.start(nextStartTimeRef.current);
+                nextStartTimeRef.current += buffer.duration;
+              } catch (err) {
+                console.error('Error processing audio output:', err);
+              }
             }
 
             if (message.serverContent?.interrupted) {
@@ -267,7 +323,10 @@ export default function DominosDemo() {
 
                 <div className="flex gap-6 justify-center">
                   <button 
-                    onClick={() => setIsMuted(!isMuted)}
+                    onClick={() => {
+                      isMutedRef.current = !isMutedRef.current;
+                      setIsMuted(isMutedRef.current);
+                    }}
                     className={`p-5 rounded-full transition-all border ${
                       isMuted 
                         ? 'bg-accent/20 text-accent border-accent/30' 

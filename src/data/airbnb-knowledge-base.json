@@ -1,0 +1,49 @@
+{
+  "faq": [
+    {
+      "category": "قوانین",
+      "question": "کیا پالتو جانوروں کی اجازت ہے؟",
+      "answer": "اسلام آباد کے کاٹیج اور کراچی کے پینتھاؤس میں پالتو جانوروں کی اجازت ہے، لیکن دیگر اپارٹمنٹس میں فی الحال اجازت نہیں ہے۔ براہ کرم میزبان سے پوچھیں۔"
+    },
+    {
+      "category": "سہولیات",
+      "question": "وائی فائی کا پاس ورڈ کیا ہے؟",
+      "answer": "ہر اپارٹمنٹ کا اپنا وائی فائی ہے؛ گلبرگ کے لیے Lahore123، کراچی کے لیے Karachi99، اور اسلام آباد کے لیے Islamabad00 پاس ورڈ ہے۔"
+    },
+    {
+      "category": "کھانا پینا",
+      "question": "قریبی اچھے کھانے کہاں ملیں گے؟",
+      "answer": "گلبرگ میں ایم ایم عالم روڈ قریب ہے، کراچی میں ڈی ایچ اے کے کیفے مشہور ہیں، اور اسلام آباد میں ای سیون کے قریب کئی اچھے ریستوران موجود ہیں۔"
+    },
+    {
+      "category": "ہنگامی حالات",
+      "question": "کسی ہنگامی صورتحال میں کیا کریں؟",
+      "answer": "ہنگامی صورت میں فوری طور پر میزبان سے رابطہ کریں۔ ہر اپارٹمنٹ میں میزبان کا رابطہ نمبر دستیاب ہے۔"
+    },
+    {
+      "category": "چیک ان/آؤٹ",
+      "question": "چیک ان کا وقت کیا ہے؟",
+      "answer": "زیادہ تر اپارٹمنٹس میں چیک ان 2:00 PM یا 3:00 PM سے ہے، اور چیک آؤٹ 11:00 AM یا 12:00 PM تک ہے۔ تفصیلات ہر پراپرٹی کی تفصیلات میں موجود ہیں۔"
+    }
+  ],
+  "commonQuestions": [
+    "WiFi password kya hai?",
+    "Pictures dikhao",
+    "Amenities kya hain?",
+    "Cancellation policy kya hai?",
+    "Check-in time kya hai?",
+    "Nearby restaurants ke baare mein batao",
+    "Pet allowed hai?",
+    "Kitchen hai?",
+    "Parking available hai?",
+    "Reviews dikhao"
+  ],
+  "voiceCommands": {
+    "showPictures": ["pictures dikhao", "images dikhao", "photos dikhao", "tasweer dikhao"],
+    "showAmenities": ["amenities", "saholiyat", "facilities"],
+    "showReviews": ["reviews", "ratings", "feedback"],
+    "booking": ["book karo", "reserve karo", "booking karo"],
+    "cancelPolicy": ["cancellation policy", "cancel policy", "refund policy"]
+  }
+}
+

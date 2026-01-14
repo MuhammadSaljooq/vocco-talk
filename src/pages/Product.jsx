@@ -59,6 +59,14 @@ const demos = [
     icon: '🏦',
     category: 'Finance',
     color: 'from-green-500/20 to-emerald-500/20'
+  },
+  {
+    id: 'londoner',
+    title: 'Londoner AI - British English Tutor',
+    description: 'Master British English with Alistair, your sophisticated London tutor. Practice RP pronunciation, idioms, and cultural nuances.',
+    icon: '🇬🇧',
+    category: 'Education',
+    color: 'from-blue-500/20 to-indigo-500/20'
   }
 ]
 

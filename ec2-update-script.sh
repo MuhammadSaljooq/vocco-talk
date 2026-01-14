@@ -51,3 +51,4 @@ sudo systemctl restart nginx
 echo "✅ Update complete!"
 echo "🌐 Your app is live at: http://$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4)"
 
+

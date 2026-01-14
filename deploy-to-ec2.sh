@@ -96,8 +96,13 @@ echo -e "${GREEN}✓${NC} Backup complete\n"
 
 # Step 5: Upload files
 echo -e "${GREEN}📤 Step 5: Uploading files to EC2...${NC}"
+# Upload to a temporary directory first, then move with sudo
+TEMP_DIR="/tmp/vocco-deploy-$$"
 rsync -avz --delete -e "ssh -i $EC2_KEY -o StrictHostKeyChecking=no" \
-    "$BUILD_DIR/" "$EC2_USER@$EC2_HOST:$REMOTE_DIR/"
+    "$BUILD_DIR/" "$EC2_USER@$EC2_HOST:$TEMP_DIR/"
+
+# Move files to final location with sudo
+ssh -i "$EC2_KEY" "$EC2_USER@$EC2_HOST" "sudo rm -rf $REMOTE_DIR/* && sudo cp -r $TEMP_DIR/* $REMOTE_DIR/ && sudo rm -rf $TEMP_DIR"
 
 echo -e "${GREEN}✓${NC} Files uploaded\n"
 

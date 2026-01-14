@@ -8,6 +8,7 @@ const AirbnbDemo = lazy(() => import('../demos/AirbnbDemo'))
 const DominosDemo = lazy(() => import('../demos/DominosDemo'))
 const ManhattanDemo = lazy(() => import('../demos/ManhattanDemo'))
 const PakBankDemo = lazy(() => import('../demos/PakBankDemo'))
+const LondonerDemo = lazy(() => import('../demos/LondonerDemo'))
 
 const demoConfig = {
   airbnb: {
@@ -294,6 +295,78 @@ const demoConfig = {
       title: 'PakBank Voice Assistant Demo | Vocco Talk',
       description: 'Experience Sana - Urdu banking assistant. Get help with balance inquiries, card management, and loan information through natural voice conversation.',
       keywords: 'banking voice assistant, urdu banking ai, financial services automation, voice banking'
+    }
+  },
+  londoner: {
+    title: 'Londoner AI - British English Tutor',
+    tagline: 'Master British English with Alistair',
+    description: 'Meet Alistair, your sophisticated British English tutor from London. Practice Received Pronunciation (RP), master British idioms, understand cultural nuances, and achieve native-like fluency through interactive voice conversations.',
+    icon: '🇬🇧',
+    category: 'Education',
+    component: LondonerDemo,
+    features: [
+      {
+        title: 'Received Pronunciation (RP)',
+        description: 'Learn authentic British accent with focus on RP phonetics and intonation patterns',
+        icon: '🎤'
+      },
+      {
+        title: 'Cultural Nuances',
+        description: 'Understand British politeness markers, understatement, and social subtext',
+        icon: '☕'
+      },
+      {
+        title: 'British Idioms & Vocabulary',
+        description: 'Master British-specific phrases, idioms, and vocabulary through conversation',
+        icon: '📚'
+      },
+      {
+        title: 'Roleplay Scenarios',
+        description: 'Practice in real-world contexts: pub conversations, job interviews, tea time',
+        icon: '🎭'
+      },
+      {
+        title: 'Progress Tracking',
+        description: 'Track your fluency metrics, vocabulary growth, and practice streaks',
+        icon: '📊'
+      }
+    ],
+    useCases: [
+      {
+        title: 'Language Learning',
+        description: 'Perfect for students and professionals who want to master British English pronunciation and cultural fluency.',
+        benefit: 'Achieve native-like British English'
+      },
+      {
+        title: 'Professional Development',
+        description: 'Prepare for job interviews, business meetings, or relocating to the UK with confidence.',
+        benefit: 'Enhanced professional communication'
+      },
+      {
+        title: 'Cultural Integration',
+        description: 'Understand British social cues, humor, and communication styles for better integration.',
+        benefit: 'Improved cultural awareness'
+      }
+    ],
+    technicalDetails: {
+      languages: ['English (British)'],
+      model: 'Gemini 2.5 Flash Native Audio',
+      responseTime: '< 500ms',
+      integration: 'Voice API, Progress Tracking',
+      supportedPlatforms: ['Web', 'Mobile'],
+      features: ['Real-time transcription', 'Vocabulary tracking', 'Progress analytics', 'Roleplay scenarios']
+    },
+    examplePhrases: [
+      'Let\'s practice ordering at a pub',
+      'Can you help me with my pronunciation?',
+      'What does "spot on" mean?',
+      'Let\'s roleplay a job interview'
+    ],
+    color: 'from-blue-500/20 to-indigo-500/20',
+    seo: {
+      title: 'Londoner AI - British English Tutor Demo | Vocco Talk',
+      description: 'Master British English with Alistair, your sophisticated London tutor. Practice RP pronunciation, idioms, and cultural nuances through interactive voice conversations.',
+      keywords: 'british english tutor, rp pronunciation, english learning ai, voice language tutor, british accent training'
     }
   }
 }

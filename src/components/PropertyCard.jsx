@@ -67,3 +67,4 @@ export default function PropertyCard({ property, onSelect, isSelected }) {
   )
 }
 
+

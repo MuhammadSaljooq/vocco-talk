@@ -1,0 +1,75 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build application
+        run: npm run build
+        env:
+          VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY }}
+      
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+      
+      - name: Deploy to EC2
+        run: |
+          # Install Nginx if not present
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'ENDSSH'
+            if ! command -v nginx &> /dev/null; then
+              sudo yum update -y
+              sudo yum install nginx -y
+              sudo systemctl start nginx
+              sudo systemctl enable nginx
+            fi
+            sudo mkdir -p /var/backups/nginx-html
+            sudo cp -r /usr/share/nginx/html /var/backups/nginx-html/backup-$(date +%Y%m%d-%H%M%S) 2>/dev/null || true
+          ENDSSH
+          
+          # Upload files
+          rsync -avz --delete -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            dist/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/usr/share/nginx/html/
+          
+          # Set permissions and restart
+          ssh -i ~/.ssh/deploy_key ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'ENDSSH'
+            sudo chown -R nginx:nginx /usr/share/nginx/html
+            sudo chmod -R 755 /usr/share/nginx/html
+            sudo systemctl restart nginx
+          ENDSSH
+      
+      - name: Verify deployment
+        run: |
+          sleep 5
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://${{ secrets.EC2_HOST }} || echo "000")
+          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "301" ] || [ "$HTTP_CODE" = "302" ]; then
+            echo "✅ Deployment verified successfully!"
+          else
+            echo "⚠️ Deployment complete but verification returned HTTP $HTTP_CODE"
+          fi
+
+

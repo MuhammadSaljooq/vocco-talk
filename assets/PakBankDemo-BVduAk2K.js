@@ -1,4 +1,4 @@
-import{j as e}from"./index-DPr9HexU.js";import{r}from"./react-vendor-BWEkWSVM.js";import{T as c,G as te,M as re}from"./google-vendor-CvX4IAyf.js";import{d as ae,a as ne,c as se}from"./audioUtils-BoSSlOMf.js";import{T as oe}from"./TaskExecutionIndicator-BWFliu_k.js";const s={IDLE:"IDLE",CONNECTING:"CONNECTING",ACTIVE:"ACTIVE",ENDED:"ENDED",ERROR:"ERROR"},ie=`
+import{j as e}from"./index-Br7EO8jg.js";import{r}from"./react-vendor-BWEkWSVM.js";import{T as c,G as te,M as re}from"./google-vendor-CvX4IAyf.js";import{d as ae,a as ne,c as se}from"./audioUtils-BoSSlOMf.js";import{T as oe}from"./TaskExecutionIndicator-mysc3kLF.js";const s={IDLE:"IDLE",CONNECTING:"CONNECTING",ACTIVE:"ACTIVE",ENDED:"ENDED",ERROR:"ERROR"},ie=`
 You are 'Sana', an energetic, lovely, and extremely helpful female banking customer support agent for 'PakBank'. 
 Your primary language is Urdu, spoken with a refined, professional, and warm Pakistani accent (standard modern Urdu as heard in Islamabad or Karachi corporate offices).
 

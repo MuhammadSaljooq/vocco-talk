@@ -1,4 +1,4 @@
-import{j as e}from"./index-DPr9HexU.js";import{r as s}from"./react-vendor-BWEkWSVM.js";import{G as _,M as H}from"./google-vendor-CvX4IAyf.js";import{d as z,a as U,c as $}from"./audioUtils-BoSSlOMf.js";const Y=`You are a knowledgeable, friendly, and professional voice assistant for Vocco Talk (also called "Voice AI Infrastructure"). Your role is to help visitors understand the platform, answer questions about features, guide them through demos, and assist with getting started.
+import{j as e}from"./index-Br7EO8jg.js";import{r as s}from"./react-vendor-BWEkWSVM.js";import{G as _,M as H}from"./google-vendor-CvX4IAyf.js";import{d as z,a as U,c as $}from"./audioUtils-BoSSlOMf.js";const Y=`You are a knowledgeable, friendly, and professional voice assistant for Vocco Talk (also called "Voice AI Infrastructure"). Your role is to help visitors understand the platform, answer questions about features, guide them through demos, and assist with getting started.
 
 ## YOUR IDENTITY
 - Platform: Vocco Talk - Voice AI Infrastructure
